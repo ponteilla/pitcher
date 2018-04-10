@@ -5,6 +5,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
+
+	"golang.org/x/net/publicsuffix"
 )
 
 var redirectDomain string
@@ -22,7 +25,16 @@ func main() {
 	})
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		domain, err := publicsuffix.EffectiveTLDPlusOne(r.Host)
+		if err != nil {
+			log.Print(err)
+			w.WriteHeader(500)
+			return
+		}
+
+		redirectDomain := strings.Replace(r.Host, domain, redirectDomain, 1)
 		redirectURL := fmt.Sprintf("https://%s%s", redirectDomain, r.RequestURI)
+
 		http.Redirect(w, r, redirectURL, http.StatusMovedPermanently)
 	})
 

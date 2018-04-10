@@ -1,10 +1,11 @@
 .PHONY: default
-default: deps lint migrate tests install
+default: deps install
+
+.PHONY: deps
+deps:
+	@go get github.com/golang/dep/cmd/dep
+	@dep ensure
 
 .PHONY: install
 install:
 	@go install ./...
-
-.PHONY: tests
-tests:
-	@go test -v ./...

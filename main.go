@@ -17,6 +17,10 @@ func init() {
 }
 
 func main() {
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(200)
+	})
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		redirectURL := fmt.Sprintf("https://%s%s", redirectDomain, r.RequestURI)
 		http.Redirect(w, r, redirectURL, http.StatusMovedPermanently)
